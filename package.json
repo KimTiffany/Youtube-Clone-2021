@@ -1,0 +1,27 @@
+{
+  "name": "youtube_clone_2021",
+  "version": "1.0.0",
+  "description": "Youtube Clone",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KimTiffany/Youtube-Clone-2021.git"
+  },
+  "scripts": {
+    "dev": "nodemon --exec babel-node src/server.js"
+  },
+  "author": "Tiffany Kim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KimTiffany/Youtube-Clone-2021/issues"
+  },
+  "homepage": "https://github.com/KimTiffany/Youtube-Clone-2021#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/node": "^7.14.7",
+    "@babel/preset-env": "^7.14.8",
+    "nodemon": "^2.0.12"
+  }
+}
