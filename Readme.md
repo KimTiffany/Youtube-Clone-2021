@@ -266,3 +266,80 @@
   - we create a block content on the base.pug
   - because we extend base.pug, we can fill up the block content
   - It's the same as essentially copying and pasting everything from base.pug to each extension of base.pug, but makes it easier to amend content and to add things without having to change everything
+  - we need to understand the block, you become the file when yu extend it
+  - why is extend cool?
+    - it allows us to have a base with certain parts that we can modify
+    - blocks can have somehting put in them, they are the windows and the doors to putting content inside of a template that you extend from
+    - if we extend from base then somehting like edit becomes a clone of base but we can but somehting inside of the block content
+    - blocks when you want to add your custom html
+    - when want to add a variable in pug, need to use this syntax
+      - `#{putVariablenameHere}`
+
+## Recap
+
+- Pug is nice cause you can write code that looks like Python and it's simpliar, based on tabs and distances
+- we learn how to render this by telling express and give it to the user with `res.respond(nameOfThe.pugFile )`
+- we do this through the server.js where we can communicate with express where is automatically looks for the pug files we program it to
+- programmers are lazy and want to make the programs as short as possible and write as little code as possible
+- so we put the code together in a way where we need to do minimal work
+  - we create individual .pug files for various elements so we don't need to update on every file that includes the same file, we only update the one file and it automatically updates
+  - don't want to copy paste the base structure for the html, so we created a base.pug file where we used the code for `block content`
+    - we never render this file directly
+    - instead we used the `block content` to edit the content inside the `block content` for each .pug file that uses the base template
+    - so in order to connect the base template to the other templates we use `extends base.pug` on the files we want to extend to.
+      - so if we want to `extend base.pug` to go to `edit.pug` we will tpye the code `extends base.pug` onto the top of the file of `edit.pug`
+    - once this is done we then get the entierty of the base.pug design and then we can add things in the areas that are defind by the `block content`
+  - what are blocks?
+    - they are ways for the base files to have a window/door to put content there
+    - we want to personalize the file, add our own things but get the good things from the previous files
+    - we don't want to just copy, we want to extend so that we can add our own things to it
+    - gives you a way to communicate back from the file you extended from
+  - looking for variable?
+    - we use the code in .pug `#{putVariablenameHere}` to add a variable
+    - we get the variable from the `res.render( )` which is located inside of the controllers
+    - it takes two arguments,
+      - 1: name of the file
+      - 2: an object that can have as many variables as we want
+    - so in this case the variable name needs to be the same
+    - EX:
+      - base.pug calls for ` title #{pageTitle} | Youtube`
+      - so inside of the video controller we write:
+      - `res.render("home", { pageTitle: "Home" });` with the name of the variable now being "Home"
+
+## How is the course set up?
+
+- we go a lot of stuff later lmfao
+- scss later
+  -MVP CSS which is a temp solution to help make the website look a little better until we add our own touches
+
+  ## Conditionals on Pug
+
+  - conditionals include else if, if else, etc
+  - `h1=pageTitle` you can write this is you just want to include the variable and you do not want to include other text
+  - `title #{pageTitle} | Youtube` if you want to unclude other text outside of the variable then you should write it like this
+  - we are extending from `base.pug`
+  - he is using thre example of whether or not a user is logged in
+  - so in this case we want to create a conditional to show if the user is logged in, then it will show the log out button, and vice versa
+  - EX:
+  - `body`
+    - `header`
+      - `if fakeUser.loggedIn`
+        - `small Hello #{fakeUser/username}`
+      - ` nav`
+        - ` ul`
+          - `if fakeUser.loggedIn`
+        - ` li`
+          - ` a(href="/login") Log out`
+        - ` else`
+          - `li`
+            - ` a(href="/login") Login`
+
+- the other part of this code that it reads from is implimented in the videoController
+  - const fakeUser = {
+    username: "Tiffany",
+    loggedIn: true,
+    };
+- then connect through the trending (home) controller
+  - `res.render("home", {pageTitle: "Home", fakeUser: fakeUser});`
+  - if we use the short cut ES6 then we can write it like this
+  - `res.render("home", {pageTitle: "Home", fakeUser});`
