@@ -4,12 +4,18 @@
   - users and videos
 - Different Pages Needed
 
+<details><summary><b>Global Router</b></summary>
+
+<p>
+
 ### Global Router
 
 - / -> Home
 - /join -> Join
 - /logig -> Login
 - /search -> Search
+</p>
+</details>
 
 ### Users Router
 
@@ -343,3 +349,200 @@
   - `res.render("home", {pageTitle: "Home", fakeUser: fakeUser});`
   - if we use the short cut ES6 then we can write it like this
   - `res.render("home", {pageTitle: "Home", fakeUser});`
+
+## Iterations on Pug: Arrays
+
+- right now he is discussing returning arrays
+- in this case we are talking about returning an array located inside of the `trending` controller which is the same location as the precious example
+- EX: this example is located inside of the brackets of the trending controller. i.e `trending = (req, res) => {`
+  - `const videos = [1, 2, 3, 4, 5];`
+  - `res.render("home", {pageTitle: "Home", videos});`
+  - `}`
+- after writting this code we then want to connect it to the `home.pug` file
+  - 1st: we need to make sure that there is a variable that is the array object in order to create and show a list
+  - then we say
+    - `each video in videos` (video is random name we pick assigned to this particular line of code, it is just the name that represents each item in the array)
+    - the name that has to be the same as the variable in the one that follows the word `in` in the line of code, this is how you are able to call to that varibale and access the itmes inside of it
+    - if the name is not the same you will get an error message saying that the name is undefined since it needs to match
+    - `ul`
+      - `each video in videos`
+        - `li=video`
+  - so what we are doing is we are saying for each item in the videos array, create a list and put the video inside of the list
+  - if the array is empty and we are unable to find what we are looking for, we can add an else statement:
+    - `ul`
+    - `each video in videos`
+      - `li=video`
+    - `else`
+      - `li Sorry, no videos were found`
+  - this is all considered pug and no javascript
+  - it doesn't necessarily have to be an array either, but it needs to be either an array or an object in order for it to work
+  - if you go onto pugs website there are a lot of examples of different iterations that can be used, so it's a good place to get a references fir what you are trying to do
+
+## Iterations on Pug: Mixins (Objects)
+
+- Ex:
+- `trending = (req, res) => {`
+  - `const videos = {{title: "Hi",}, title: "Apple",}, {title: "Grape",}}`
+  - `res.render("home", {pageTitle: "Home", videos});`
+  - `}`
+- this above example shows objects written instead of an array, so the way to impliment this is simple
+  - `ul`
+  - `each video in videos`
+    - `li=video.title` <- this fixes it
+  - `else`
+    - `li Sorry, no videos were found`
+- now we discuss mixins, they are like partials
+  - it's a partial that receives data
+  - what do we do when html has same shape but not same data?
+    - this are mixins "smart partials"
+- EX:
+- `const videos = {`
+  - `{title: "Hi", rating: 5, comments: 2, createdAt: "22 minutes ago"}, views: 59, id: 1 `
+  - `{title: "Apple",rating: 5, comments: 2, createdAt: "22 minutes ago"}, views: 59, id: 1 },`
+  - ` {title: "Grape",rating: 5, comments: 2, createdAt: "22 minutes ago"}, views: 59, id: 1 }}`
+  - so what we can do is alternate the code for pug:
+  - `each video in videos`
+  - `div` -` h4= video.title`
+    - `ul`
+      - `li #{video.rating}/5`
+      - `li #{video.comments} comments.`
+      - `li Posted #{createdAt}`
+      - `li #{video.views} views.`
+  - `else`
+    - `li Sorry, no videos were found`
+- so on youtube, the template for each video is the same meaning that youtiube re-uses the shape and the way the videos are
+- we want to copy paste less, but we want to use the same structure
+  - this where mixins come in
+  - on my code I created and used the code above, and then added it to my current html
+  - I created the `video.pug` file and saved the template inside of there, this was created within the folder `mixins`
+  - I then added it to my `home.pug` file using these three lines of code
+    - `include mixins.video`
+    - then we create the code to actually use the template
+    - `each view in videos`
+      - `+video(view)`
+      - the plus is how we call the mixins
+
+## Recap: Iterations and Mixins
+
+- When is comes to front end development of our code, we will be using iterations a lot, and also sometimes using mixins
+
+### - Iteration:
+
+- means we want to do an actions for every element on an array
+- is an array and or an array of objects
+- something that we will do a lot
+- if you do not iterate on an array there will be an error stating that the object is not defined
+- the else condition when the array is empty
+- we then need to return the values in the videoControllers(in this case, it could be from somewhere else in other code) and this is done by calling the array name in the line like this
+  - `res.render("home", {pageTitle: "Home", videos});`
+
+### - Mixins:
+
+- each "x" in videos is an object, so what we do is we apply a mixin to show each value
+- youtube uses video blocks, and they are everywhere, we want to show the same html shape in serveral places
+- the mixin is a pre-made html shape that will take information form the ouside world
+- in our case, the `video.pug` file is like a partial, like `footer.pug` except that it gathers information unlike `footer.pug`
+- the content is the thing that changes
+- so in order to make sure that the data is not undefined (is not a function), we need to send it to `video.pug`
+- and once this is done, the video template will display things the way we want
+- code example is above
+- return the same shape with different data
+
+# DataBase Ch 6
+
+## Array Database
+
+- the first thing we are going to learn is about post
+- the first thing that he does is take the fake database that we created and post it ouside of the trending controller, and posts in at the beginning of the controllers (outside of all of the controllers)
+- also chanes `const` to `let`
+- the goal for now is to be able to click the video title and be able to go to the page with the url
+  `localhost:4000/videos/(video id)`
+- in order to do this we need to change the mixin
+- we do this by writting the line of code like this:
+  - `a(href=`/videos/${video.id}` )=video.title`
+  - with adjusting the code that is inside of the videoController, we were able to render the watch page, add the new title, and console log the video id
+
+### - absolute vs relative urls
+
+- if you put a slash in front of the href
+  - `a(href="/edit") Edit Video &rarr;`
+  - this will go to the root of the url and then the added url after the slash
+    - `localhost:4000/edit`
+- now when you remove the slash in front, you get a relatice url
+  - `a(href="edit") Edit Video &rarr;`
+  - this means that because there is no slash, the browser will change the ending
+  - `localhost:4000/videos/edit`
+- in the our case atm we want a relative url
+
+## Editing the Videos: 6.2
+
+- get request vs a post request?
+
+  - give name to input to see what is the diff
+  - the method is get by default
+  - get is when you are retriving information from the database while
+  - post is when you are changing somehting within the database
+
+  - the best thing to think about is what is the data going to do in the backend
+  - are you going to do something with the data to change the database? then you use POST
+  - if you are just going to retrieve the information than you use GET
+
+  - we need to use the code
+    - `express.urlencoded()` this understand the body of the forms
+    - has some options, but we will use `extended`
+      - basically formats the information on the body in a cool way
+
+- in side of the server.js, we impliment the following code
+- ` app.use(express.urlencoded({ extended: true }));`
+  - this makes the express application understand and transform the forms values into cool java script that can be used later
+
+## Recap 6.4
+
+- we need to send data to our backend, and we do this by using forms
+
+  - we use the method POST inside of the form
+    - this will send a post request to the backend
+  - so in order to deal with that, we create the `videoRouter.route` inside of the videoRouter to send the request as either get or post
+    - tend to use route if there is two or more http "verbs"
+  - `req.body` this is the JS representaiton of the values in your form
+  - this is possible because we created a middleWare inside of the `server.js`
+
+    - `app.use(express.urlencoded({ extended: true }));`
+    - this middleware understands html forms and it translates html forms into js objects
+    - this middleware is also posted before the routers, there will already be a req.body so we can get the information about the request
+    - in order for the req.body to show, you need to name the input that you are getting the information from in the form
+
+    - What are we using for the database?
+      - MongoDB and Mongoose
+
+## MongoDB
+
+- it's a database that is easy to work with and easy to understand, ecpecially as a beginner
+- document-based database system: stores data in JSON-like documents
+- the data-base doesn't save in rows and collums
+- easier to find stuff in the database system
+
+## Mongoose
+
+- Mongoose is the bridge between js and MongoDB
+- we want to communicate with MongoDB using JS so Mongoose is the mediator
+- the bridge between nodeJS and Mongoose
+- we connect to the databnase by installing and running both MongoDB and Mongoose
+- We do then write the code necessary to connect inside of `db.js`
+
+## CRUD
+
+- Create
+- Read
+- Update
+- Delete
+- these are the differnt functions that we will be making and using as we make the project
+- we will now practice and make the plan using mongoose
+- we need to tell mongoose what our data looks like
+
+## Query
+
+- what is an example of a callback?
+  - a function that is called after something happens
+  - do this then when that happens do this
+  - when we are using a callback function, we are waiting for something, we are accessing somehting outside if the js, such as the database and therefore we are waiting for a response
