@@ -8,14 +8,15 @@
 
 <p>
 
+</p>
+</details>
+
 ### Global Router
 
 - / -> Home
 - /join -> Join
 - /logig -> Login
 - /search -> Search
-</p>
-</details>
 
 ### Users Router
 
@@ -543,6 +544,106 @@
 ## Query
 
 - what is an example of a callback?
+
   - a function that is called after something happens
   - do this then when that happens do this
   - when we are using a callback function, we are waiting for something, we are accessing somehting outside if the js, such as the database and therefore we are waiting for a response
+
+  ## Promise for callbacks
+
+  ### Everything in the following parts are all taking place inside of the videoController, postUpload function
+
+  - The differnce between using `callbacks` and `async` and `await`
+
+    - so when you put `await` in front of `find`:
+      - `const videos = await Video.find({});`
+    - find knows that you don't want the call back:
+      - `Video.find({}, (error, videos) => {});`
+    - so find will give you the found videos as the result of the find operation
+    - so how do we get the errors? Try and Catch
+    - there are two methods, the Java Script way with callbacks:
+      - 1 :`Video.find({}, (error, videos) => {`
+        - `if (error){`
+          3: - `return res.render("server-error")`
+      - `}`
+        -2: `return res.render("home", {pageTitle: "Home", videos});`
+    - `});`
+    - The other way to do this is by using the Try and Catch method:
+    - `try {`
+      - 1: `const videos = await Video.find({});`
+      - 2: ` return res.render("home", { pageTitle: "Home", videos });`
+    - 3: `} catch {` - `return res.render("server-error");`
+
+  - the good thing about `await` is that it waits for the database
+  - when we use the `await` function, it forces js to wait or the response form the db which causes the order the be correct in a way
+  - in the call
+  - with the callback function the order is different because js doesn't wait, so the order is more like 1, 3, 2, where the middle part does not execute first since js doesn't wait for the response from the db
+  - so `await` reads the code from top to bottom the way we want
+  - also, when using `await` it must be used inside of a function that is async, so we add async in the beginning like such:
+    - `export const home = async (req, res) => `
+  - in terms of the callback function, when you put return inside of another functions, i.e the 1st fucntion which is: `export const home = async (req, res) => {`
+  - and then you add the other function => ` Video.find({}, (error, videos) => {`
+  - the the return function located inside of `Video` does not return anything to the `home` function
+  - so inside of express, it doesn't matter if we use return or not, what matter is the function we call
+  - cannot `res.render` something twice, so express will not allow it, so when we use the line of code,
+    - `res.render(etc...)` we can only call this once within the function
+    - do we cannot res twice within a function
+    - so, return is not a requirment but we use it to make sure that the function finishes
+  - 1 :`Video.find({}, (error, videos) => {` - `if (error){`
+  - 3: ` return res.render("home", { pageTitle: "Home", videos });`
+  - `}`
+    -2: `return res.end());`
+  - `});`
+  - so within this callback funciton, the last line of code will execute first, so the one labeled 2, and because of this the home function will never be callled and the connection to the host will end
+
+## Creating a Video
+
+### Everything in the following parts are all taking place inside of the videoController, postUpload function
+
+- Schema which is the shape of the video
+- we can use the function `split` to break apart each word in a string, so when we impliment the hashtags, we can tag each of them
+- example: `"apple, chicken, cheese".split(",")`
+- this then becomes and array seperated by the commas
+  - `["apple", "chicken", "cheese"]`
+    so to add the hashtag in front, we can use the funciton map
+    - `"apple, chicken, cheese".split(",").map((word) => `#${word}1`)`
+      - which then gives us: `["#apple", "#chicken", "#cheese"]`
+- {
+  - hastags: [ '#apple1', '# cheese1', '# turkey1' ],
+  - \_id: 610d6e63d64ca439d86b9b14,
+  - title: 'apple ',
+  - description: 'apple cheese',
+  - createdAt: 2021-08-06T17:16:19.835Z,
+  - meta: { views: 0, rating: 0 }
+- }
+
+- when we console log the video, this is what is shown, we are getting and id thanks to mongooose, which connects us to mongodb. and documents need and id, so we are given a random one
+
+### Now we created the video! Now what?
+
+### Everything in the following parts are all taking place inside of the videoController, postUpload function
+
+- we need to add the video to the database
+  - so with Mongoose, we are being protected, so if we enter the wrong type of data into certain ares, it won't save that data to the document, or when we have a string object, i.e the title of the video and we enter a number, it will automatically turn the number into a string. and if we enter in a string into a number, it will not add that into the document
+- Mongoose is helping to validate the type of the data
+  - thats the advantage of defining the shape of the data, so Mongoose helps us so we do not have false data
+- so now lets save this to the data base
+  - so in our case we can write, `video.save()`
+    - now because this is a function that needs to wait for the database, it is not just in js, js happens automatically, but this will pause and cause the code to wait for the response from Mongoose
+    - in order to wait for the video to save, we once again need to use `async` and `await`
+    - so when using these two lines of code, it cause save to return a `Promise` which we have to await and then it returns thre created document
+- and now we have a video! :D
+- now it is on the DataBase!
+- a colleciton is a group of documents (can see this in the computers terminal)
+
+  - there is also another way to save the video,
+  - inside the `postUpload` function we can alter the code, and instead of saying `video.save();` we can instead in the beginning, ` await Video.create` and then it will work just the same
+
+  - in order to offer the most protection for the program, the user, the browser etc, it is best to specify certain things in both the Schema and the html.
+    - what I mean is that for an example: We want the description to be a maxLength of 240 characters, so we should specify this in the upload.pug and also inside of the Video.js files so that way if someone were to hack the wesite, they cannot effect the database
+  - the Video.js is the power of defining the VideoSchema
+  - we need to use a regular expression in order for the browser to read the hexidecimal value assigned as the id for the videos in the browser.
+    - we do this with the expression ([0-9a-f]{24})
+    - this means zero through 9, a through f, and the 24 characters it is compreished of
+
+- put the error code inside of the if statement inside of the functions in order to kill the code early if there is an error
