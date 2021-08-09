@@ -647,3 +647,29 @@
     - this means zero through 9, a through f, and the 24 characters it is compreished of
 
 - put the error code inside of the if statement inside of the functions in order to kill the code early if there is an error
+
+## Editing the Video:
+
+- we need to send a POST request to the /videos/id/edit in order to post the edited material
+- the uppercase `Video` is the model. from Video.pug, and the lowercase `video` is the video object found in the databasse
+- mongoose also has the middleware option where you are a able to validate or check something before you save a value
+- `exists` requires a filter which could be anything, but in our cause it is ` ({_id:id})`
+
+## Middlewares in Mongoose
+
+- it does not interupt the flow, it will do something and then it will continue the flow
+
+  - an example for this is to use a middleware before saving something or removing something
+  - we have to create out middleware before we create our model
+  - inside of the middleware type that we will be using, there is a keyword called `this`, `this` refers to the document that we are about to save
+  - the middleware in this section is located inside of Video.js and is the `videoSchema.pre`
+
+  - there is a better way to save the video because in our case we meed to save it when it is initially created but also when it is edited
+
+### Statics
+
+- videoSchema.static("formatHashtags", function (hashtags) {
+  return hashtags
+  .split(",")
+  .map((word) => (word.startsWith("#") ? word : `#${word}`));
+  });
