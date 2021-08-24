@@ -673,3 +673,9 @@
   .split(",")
   .map((word) => (word.startsWith("#") ? word : `#${word}`));
   });
+
+## Section 7.0 User login
+
+- we are going to be implimenting user login and will be able to remember the user, and we will also be able to enable git hub login
+- using CRUDE
+- going to make passwords, users and sessions
